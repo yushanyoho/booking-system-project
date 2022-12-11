@@ -46,19 +46,22 @@ public class BookingApplication {
 		@Override
 		public void addInterceptors(InterceptorRegistry registry) {
 			registry.addInterceptor(new LogInterceptor());
-			WebMvcConfigurer.super.addInterceptors(registry);
 		}
 
 		@Override
 		public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
 			resolvers.add(new TodaysDateArgumentResolver());
-			WebMvcConfigurer.super.addArgumentResolvers(resolvers);
 		}
 
 	}
 
 	@Configuration
+	// Application层面的security，规定谁可以登录
+	// @EnableWebSecurity will search for an implementation of UserDetailsService (UserService) to check if the password matches the username
 	@EnableWebSecurity
+	// Method层面的security，规定谁可以访问哪个api
+	// prePostEnabled -> @PreAuthorize 规定哪个 username 可以访问当前api
+	// securedEnabled -> @Secured, jsr250Enabled -> @RolesAllowed 规定哪些角色(Authorities)(roles)可以访问当前api
 	@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, jsr250Enabled = true)
 	public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -67,13 +70,18 @@ public class BookingApplication {
 			// @formatter:off
 			http.csrf().disable()
 				.authorizeRequests()
+					// 任何 request 都可以访问 "localhost:8081/api/"
 					.antMatchers("/").permitAll()
+					// 任何 request 都可以访问 “localhost:8081/api/users”
 					.antMatchers(HttpMethod.POST, "/users").permitAll()
+					// 除以上两个 patterns 以外，其他 request 都需要 authentication (privilege)，包括 "localhost:8081/api/todaysDate"
 					.anyRequest().authenticated()
 					.and()
+				// 如果在验证 authentication 的过程中出错，报 UNAUTHORIZED??????
 				.exceptionHandling()
 					.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
 					.and()
+				// @EnableWebSecurity will search for an implementation of UserDetailsService (UserService) to check password
 				.formLogin()
 					.loginPage("/login").permitAll()
 					.successHandler(loginSuccessHandler())

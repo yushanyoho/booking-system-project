@@ -8,6 +8,7 @@ import com.pivottech.booking.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -38,7 +39,9 @@ public class AvailabilityController {
 	}
 
 	@PostMapping("")
-	@RolesAllowed({ "Instructor" })
+	// response 403 Forbidden if rules not allowed
+	@RolesAllowed({ "Instructor" }) // from javax.annotation.security 限制 Authorities (roles)
+	// @Secured({ "Instructor" }) // from springframework.security.access.annotation
 	public Iterable<Availability> create(@PathVariable("username") String username,
 			@Valid @RequestBody CreateAvailabilityRequest request) {
 		User user = userService.getUserByUsername(username);

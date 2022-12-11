@@ -35,6 +35,7 @@ public class ReservationController {
 	}
 
 	@GetMapping("")
+	// 能不能 redirect 到 "/login"? 能不能附带message？
 	@PreAuthorize("#username == authentication.principal.username")
 	public List<Reservation> list(@PathVariable("username") final String username,
 			@RequestParam(name = "from") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime from,
@@ -62,6 +63,7 @@ public class ReservationController {
 	}
 
 	@PostMapping("")
+	// 能不能 redirect 到 "/login"? 能不能附带message？
 	@PreAuthorize("#username == authentication.principal.username")
 	public Reservation create(@PathVariable("username") final String username,
 			@Valid @RequestBody final MakeReservationRequest request) {

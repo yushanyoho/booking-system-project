@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Models core user information retrieved by a UserDetailsService.
+ */
 @Data
 @ToString(exclude = { "password" })
 @Entity(name = "User")
@@ -39,10 +42,19 @@ public class User implements UserDetails {
 	@JsonManagedReference("user-student")
 	Student student;
 
+	/**
+	 * <p>Returns the authorities (roles) granted to the user. Cannot return <code>null</code>.
+	 * <p>用于定义并获取 user roles
+	 * @return the authorities (roles), sorted by natural key (never <code>null</code>)
+	 */
 	@Override
 	@JsonIgnore
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
+		// 当配套 @RolesAllowed 使用时需要在角色名中加入前缀，而配套 @Secured 则不需要
+		// @RolesAllowed({ "<role_name>" }), new SimpleGrantedAuthority("ROLE_<role_name>")
+		// @Secured({ "<role_name>" }), new SimpleGrantedAuthority("<role_name>")
 		if (this.instructor != null) {
 			authorities.add(new SimpleGrantedAuthority("ROLE_Instructor"));
 		}

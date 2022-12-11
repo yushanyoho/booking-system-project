@@ -7,6 +7,7 @@ import com.pivottech.booking.model.User;
 import com.pivottech.booking.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,7 +32,9 @@ public class UserController {
 	}
 
 	@PostMapping("students/{username}")
-	public Student createOrUpdateStudent(@PathVariable("username") String username, @RequestBody Student student) {
+	@PreAuthorize("#username == authentication.principal.username")
+	public Student createOrUpdateStudent(@PathVariable("username") String username,
+										 @RequestBody Student student) {
 		User user = userService.getUserByUsername(username);
 		if (user == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "username doesn't exist.");
@@ -41,12 +44,16 @@ public class UserController {
 	}
 
 	@PostMapping("instructors/{username}")
+	@PreAuthorize("#username == authentication.principal.username")
 	public Instructor createOrUpdateInstructor(@PathVariable("username") String username,
-			@RequestBody Instructor instructor, @AuthenticationPrincipal User currentUser) {
+											   @RequestBody Instructor instructor,
+											   // Get the current user from the current Authentication Principle Info
+											   @AuthenticationPrincipal User currentUser) {
 
-		if (!currentUser.getUsername().equals(username)) {
-			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "xxxx");
-		}
+//		if (!currentUser.getUsername().equals(username)) {
+//			// 能不能 redirect 到 "/login"?
+//			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Cannot update for other users.");
+//		}
 
 		User user = userService.getUserByUsername(username);
 		if (user == null) {

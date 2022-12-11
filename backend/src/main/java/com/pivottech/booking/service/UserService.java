@@ -13,7 +13,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 public class UserService implements UserDetailsService {
 
 	@Autowired
@@ -26,7 +29,7 @@ public class UserService implements UserDetailsService {
 	InstructorRepository instructorRepository;
 
 	@Autowired
-	PasswordEncoder passwordEncoder;
+	PasswordEncoder passwordEncoder; // from config
 
 	public User createUser(String username, String password) {
 		User user = new User();
@@ -67,6 +70,14 @@ public class UserService implements UserDetailsService {
 		return existing;
 	}
 
+	/**
+	 *
+	 * @param username the username identifying the user whose data is required.
+	 * @return An instance of a concrete class who implements the UserDetails interface.
+	 * Could be a custom class model\User or the built-in class
+	 * 'org.springframework.security.core.userdetails.User'
+	 * @throws UsernameNotFoundException
+	 */
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = this.getUserByUsername(username);
