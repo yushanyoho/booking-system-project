@@ -16,13 +16,12 @@ public class CreateAvailabilityRequest {
 
 	@NotNull
 	@Future
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+	// @JsonFormat to control the output format of Date and Calendar types. 用于规范 field
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	LocalDateTime fromUtc;
 
 	@NotNull
 	@Future
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm")
 	LocalDateTime toUtc;
 

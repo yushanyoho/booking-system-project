@@ -1,7 +1,9 @@
 package com.pivottech.booking.service;
 
 import com.pivottech.booking.model.Reservation;
+import com.pivottech.booking.repository.AvailabilityRepository;
 import com.pivottech.booking.repository.ReservationRepository;
+import org.assertj.core.util.VisibleForTesting;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,8 +21,11 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class BookingServiceTest {
 
-	@Mock
+	@Mock // org.mockito 用于创建仿造的service（不是application本身运行时使用的那个instance）
 	ReservationRepository mockReservationRepository;
+
+	@Mock
+	AvailabilityRepository mockAvailabilityRepository;
 
 	BookingService service;
 
@@ -40,9 +45,9 @@ class BookingServiceTest {
 
 	@Test
 	void createReservation() {
-		var toBeCreated = Reservation.builder().description("initial reservation").build();
-		// service.createReservation(toBeCreated);
-		// verify(mockReservationRepository).save(toBeCreated);
+//		var reservation = Reservation.builder().description("initial reservation").build();
+//		service.createReservation(toBeCreated);
+//		verify(mockReservationRepository).save(toBeCreated); // test mockReservationRepository.save() is invoked
 	}
 
 	// @Test

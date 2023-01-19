@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Entity(name = "Availability")
 @Table(indexes = { @Index(name = "index_instructor_start_end", columnList = "utcStartTime, utcEndTime, instructor_id",
 		unique = true) })
-@Data
+@Data // @Getter, @Setter, @RequiredArgsConstructor, @ToString, @EqualsAndHashCode, @Value
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,7 +37,7 @@ public class Availability {
 
 	@ManyToOne
 	@JoinColumn(name = "reservation_id")
-	@JsonBackReference
+	@JsonBackReference // stop the object serialization recursion here, hide this field from JSON serialization
 	Reservation reservation;
 
 	@Version

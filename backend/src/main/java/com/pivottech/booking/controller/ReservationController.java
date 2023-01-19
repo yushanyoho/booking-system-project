@@ -44,9 +44,13 @@ public class ReservationController {
 		if (user == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "student doesn't exist");
 		}
+
+		// 如果是student，查看reservation中有哪些符合student_id, from, to
 		if (user.getStudent() != null) {
 			return bookingService.getStudentReservationsBetween(user.getStudent(), from, to);
 		}
+
+		// 如果是instructor，查看availability中有哪些符合instructor_id, 并且availability.reservation 符合 from, to
 		if (user.getInstructor() != null) {
 			return bookingService.getInstructorReservationsBetween(user.getInstructor(), from, to);
 		}
@@ -67,10 +71,15 @@ public class ReservationController {
 	@PreAuthorize("#username == authentication.principal.username")
 	public Reservation create(@PathVariable("username") final String username,
 			@Valid @RequestBody final MakeReservationRequest request) {
+
 		final User user = userService.getUserByUsername(username);
+
+		// 能否改成instructor也可以make reservation？
 		if (user == null || user.getStudent() == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "student doesn't exist");
 		}
+
+		// if provided with an already reserved Availability
 		final Availability availability = bookingService.getAvailabilityById(request.getAvailabilityId());
 		if (availability == null || availability.getReservation() != null) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "not available");

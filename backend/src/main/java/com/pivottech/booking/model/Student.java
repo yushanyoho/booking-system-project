@@ -8,8 +8,8 @@ import java.io.Serializable;
 
 @Entity(name = "Student")
 @Data
-@ToString(exclude = { "user" })
-@EqualsAndHashCode(exclude = { "user" })
+@ToString(exclude = { "user" }) // 否则调用toString()时会发生死循环
+@EqualsAndHashCode(exclude = { "user" }) // 否则生成hashcode时会发生死循环
 public class Student implements Serializable {
 
 	@Id

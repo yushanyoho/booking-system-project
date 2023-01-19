@@ -30,7 +30,7 @@ export function BookingSystemContextProvider({
   const [role, setRole] = useState<Role | null>(null);
 
   // Fetch user information from local storage
-  const onRequestSusccess = useCallback((response) => {
+  const onRequestSuccess = useCallback((response) => {
     if (!Boolean(response)) {
         return;
     }
@@ -39,15 +39,19 @@ export function BookingSystemContextProvider({
     const username = response.username;
     const role = response.instructor?.id != null ? 'Instructor' : 'Student';
 
+    // set context -> 触发re-render studentView / instructorView
     setUserName(username);
     setRole(role);
-}, [setRole, setUserName]);
+  }, [setRole, setUserName]);
 
+  // 仅在初次渲染（mount）context provider的时候运行
   useEffect(() => {
+    // 拿到localStorage中存储的username
     const userFromStorage = localStorage.getItem('username');
     if (userFromStorage != null) {
+      // 直接通过存储的username拿到用户信息
       new BookingSystemRequest(`users/${userFromStorage}`, 'GET')
-            .onSuccess(onRequestSusccess)
+            .onSuccess(onRequestSuccess)
             .send();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -62,4 +66,5 @@ export function BookingSystemContextProvider({
   );
 }
 
+// 其他component使用context时要用到同一个context object
 export default BookingSystemContext;

@@ -29,6 +29,7 @@ public class AvailabilityController {
 
 	@GetMapping("")
 	public Iterable<Availability> list(@PathVariable("username") String username,
+			// @DateTimeFormat: Declares that a field or method parameter should be formatted as a date or time
 			@RequestParam(name = "from") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime from,
 			@RequestParam(name = "to") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") LocalDateTime to) {
 		User user = userService.getUserByUsername(username);

@@ -25,34 +25,22 @@ public class LogInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 
-		/**
-		 * log the type of HttpServletRequest (REQUEST / ERROR)
-		 */
+		// log the type of HttpServletRequest (REQUEST / ERROR)
 		log.info("preHandle. request type: {}", request.getDispatcherType());
 
-		/**
-		 * If the given handler is an instance of HandlerMethod
-		 */
+		// If the given handler is an instance of HandlerMethod
 		if (handler instanceof HandlerMethod) {
 
-			/**
-			 * Convert it to the HandlerMethod class
-			 */
+			// Convert it to the HandlerMethod class
 			HandlerMethod handlerMethod = (HandlerMethod) handler;
 
-			/**
-			 * Get the class name of the given handler (HelloWorldController)
-			 */
+			// Get the class name of the given handler (HelloWorldController)
 			String methodClass = handlerMethod.getMethod().getDeclaringClass().getName();
 
-			/**
-			 * Get the method name of the given handler (index, todaysDate, etc...)
-			 */
+			// Get the method name of the given handler (index, todaysDate, etc...)
 			String methodName = handlerMethod.getMethod().getName();
 
-			/**
-			 * log the class name and method name of the given handler
-			 */
+			// log the class name and method name of the given handler
 			log.info("handler: {}, {}", methodClass, methodName);
 		}
 		return true;
@@ -72,9 +60,7 @@ public class LogInterceptor implements HandlerInterceptor {
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
 
-		/**
-		 * log info after successful execution of a handler.
-		 */
+		//log info after successful execution of a handler.
 		log.info("postHandle");
 	}
 

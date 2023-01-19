@@ -27,7 +27,7 @@ public class Reservation {
 	String description;
 
 	@OneToMany(mappedBy = "reservation")
-	@JsonManagedReference()
+	@JsonManagedReference() // get internal fields of this object
 	List<Availability> availabilities;
 
 	@NotNull
@@ -43,12 +43,12 @@ public class Reservation {
 	@NotNull
 	Student student;
 
-	@JsonGetter("studentUsername")
+	@JsonGetter("studentUsername") // add an extra field "studentUsername" to JSON serialization output
 	public String getStudentUsername() {
 		return this.student.user.username;
 	}
 
-	@JsonGetter("instructorUsername")
+	@JsonGetter("instructorUsername") // add an extra field "instructorUsername" to JSON serialization output
 	public String getInstructorUsername() {
 		return this.availabilities.stream().findFirst().get().instructor.user.username;
 	}

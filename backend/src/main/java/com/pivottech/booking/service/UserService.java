@@ -44,20 +44,25 @@ public class UserService implements UserDetailsService {
 		return userRepository.getByUsername(username);
 	}
 
-	public Student updateStudentProfile(String username, Student student) {
+	public Student updateUserProfile(String username, Student student) {
 		User user = getUserByUsername(username);
+
+		// if user is not a student (has not been saved  into the student table)
 		if (user.getStudent() == null) {
 			student.setUser(user);
 			studentRepository.save(student);
 			return student;
 		}
+
+		// if user is already a student (exist in the student table)
 		Student existing = user.getStudent();
 		existing.setGrade(student.getGrade());
+		// user table 中没有任何record更新，为什么要保存user？？？ 为什么 existing 不用保存？
 		userRepository.save(user);
 		return existing;
 	}
 
-	public Instructor updateStudentProfile(String username, Instructor instructor) {
+	public Instructor updateUserProfile(String username, Instructor instructor) {
 		User user = getUserByUsername(username);
 		if (user.getInstructor() == null) {
 			instructor.setUser(user);

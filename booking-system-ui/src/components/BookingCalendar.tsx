@@ -2,7 +2,7 @@ import { Calendar, Views } from 'react-big-calendar';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useCallback, useState } from 'react';
 import { Container, } from '@mui/material';
-import EventDetailsModal from './EventDeailsModal';
+import EventDetailsModal from './EventDetailsModal';
 import NewMeetingModal from './NewReservationModal';
 import useCalendar from '../hooks/useCalendar';
 import { Event } from '../utils/CalendarUtils';
@@ -10,7 +10,7 @@ import ErrorModal from './ErrorModal';
 
 export default function BookingCalendar(): React.ReactElement {
     const titleAccessor = useCallback(
-        (e: Event) => e.title ?? 'Available',
+        (e: Event) => e.title ?? '', // e.title 可能为null
         []
     );
 
@@ -24,7 +24,7 @@ export default function BookingCalendar(): React.ReactElement {
         setError,
         onDetailsModalClose,
         onRangeChange,
-    } = useCalendar(true);
+    } = useCalendar(true); // <BookingCalendar /> 用于学生访问老师的页面，只会被InstructorView调用，所以可以 hard code true
 
     const [selectedAvailability, setSelectedAvailability] = useState<Event | null>(null);
 
@@ -54,6 +54,7 @@ export default function BookingCalendar(): React.ReactElement {
                     views={[Views.WEEK]}
                     view={Views.WEEK}
                     titleAccessor={titleAccessor}
+                    selectable={false}
                     onSelectEvent={onEventSelected}
                     onRangeChange={onRangeChange}
                 />

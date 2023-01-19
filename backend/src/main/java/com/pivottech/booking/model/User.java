@@ -32,13 +32,13 @@ public class User implements UserDetails {
 	String username;
 
 	@JsonIgnore()
-	String password;
+	String password; // encoded password
 
-	@OneToOne(mappedBy = "user")
+	@OneToOne(mappedBy = "user") // 在 Instructor table 中通过 JOIN User table 获得
 	@JsonManagedReference("user-instructor")
 	Instructor instructor;
 
-	@OneToOne(mappedBy = "user")
+	@OneToOne(mappedBy = "user") // 在 Student table 中通过 JOIN User table 获得
 	@JsonManagedReference("user-student")
 	Student student;
 

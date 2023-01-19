@@ -43,11 +43,15 @@ export default function PTSignUpForm(): React.ReactElement {
     const onPasswordChange = useCallback((e) => {
         setPasswordInput(e.target.value);
     }, []);
-    const onTabChange = useCallback((_, newValue) => {
+    // function(event: React.SyntheticEvent, value: any) => void
+    const onTabChange = useCallback((e, newValue) => {
+        // catch tab value，记录 click on 'Student' tab or 'Instructor' tab
+        // 之后用于判断显示 Introduction TextField (Instructor) or Grade TextField (Student)
         setTab(newValue);
     }, []);
+
     const onGradeChange = useCallback((e) => {
-        setGradeInput(e.target.value);
+        setGradeInput(e.target.value as string);
     }, []);
     const onIntroChange = useCallback((e) => {
         setIntroduction(e.target.value);
@@ -61,41 +65,54 @@ export default function PTSignUpForm(): React.ReactElement {
         onErrorMsgClose,
         onRequestFailed,
         onRequestSuccess,
-    } = useAuthenticationForm(() => {
-        return {
-            username: userNameInput,
-            role: tab as Role,
-        };
-    });
+    } = useAuthenticationForm(
+        // 和LoginForm不同，这里不需要parseResponse，SignUp的时候用户端本身有可用的userName和role
+        () => {
+            return {
+                username: userNameInput,
+                role: tab as Role,
+            };
+        }
+    );
 
+    /** set role + re-direct */
     const onLoginSuccess = useCallback(() => {
         const isStudent = tab === 'Student';
         const path = isStudent ? 'students' : 'instructors';
         const payload = isStudent ? {grade: gradeInput} : {introduction: introduction}
-        new BookingSystemRequest(`${path}/${userNameInput}`, 'POST')
+        new BookingSystemRequest(`${path}/${userNameInput}`, 'POST') // /api/instructors/yyy: createOrUpdateInstructor(), /api/students/ysl: createOrUpdateStudent()
             .setPayload(payload)
-            .onSuccess(onRequestSuccess)
-            .onFailure(onRequestFailed)
-            .onError(onRequestFailed)
+            .onSuccess(onRequestSuccess) // parseResponse -> set context -> re-direct to homepage ( history.push() )
+            .onFailure(onRequestFailed) // setErrorMessage
+            .onError(onRequestFailed) // setErrorMessage
             .send();
-    }, [gradeInput, introduction, onRequestFailed, onRequestSuccess, tab, userNameInput]);
+        },
+        // 将 new BookingSystemRequest() 中用到的所有变量添加到dependency中（setPayload)
+        // 否则callback function发送request时不能及时更新相应信息
+        [gradeInput, introduction, onRequestFailed, onRequestSuccess, tab, userNameInput]
+    );
 
+    /** login */
     const onUserCreationSuccess = useCallback(() => {
+        // login: url = 'api/login?username={userNameInput}&password={passwordInput}
         new BookingSystemRequest(`login?username=${userNameInput}&password=${passwordInput}`, 'POST', true)
             .onStart(onRequestStart)
-            .onSuccess(onLoginSuccess)
-            .onFailure(onRequestFailed)
-            .onError(onRequestFailed)
+            .onSuccess(onLoginSuccess) // 如果 login 成功，调用onLoginSuccess以re-direct到user homepage
+            .onFailure(onRequestFailed) // setErrorMessage
+            .onError(onRequestFailed) // setErrorMessage
             .send();
     }, [onRequestStart, onRequestFailed, onLoginSuccess, userNameInput, passwordInput]);
 
+    /** SignUp */
     const onSubmit = useCallback((e) => {
+        // Create User Request: url = '/api/users', method = 'POST', body = payload
+        // constructor(path: string, method: Method, isFormData=false) {...}
         new BookingSystemRequest(`users`, 'POST')
-            .setPayload({ username: userNameInput, password: passwordInput })
-            .onStart(onRequestStart)
-            .onSuccess(onUserCreationSuccess)
-            .onFailure(onRequestFailed)
-            .onError(onRequestFailed)
+            .setPayload({ username: userNameInput, password: passwordInput }) // set POST body
+            .onStart(onRequestStart) // isLoading = true
+            .onSuccess(onUserCreationSuccess) // 如果 SignUp 成功，调用onUserCreationSuccess来login
+            .onFailure(onRequestFailed) // errorMessage
+            .onError(onRequestFailed) // errorMessage
             .send();
         e.preventDefault();
     }, [onRequestFailed, onRequestStart, onUserCreationSuccess, userNameInput, passwordInput]);
@@ -121,6 +138,7 @@ export default function PTSignUpForm(): React.ReactElement {
                     </Alert>
                 )}
                 <Box sx={styles.tabGroup}>
+                    {/* 一个tab group，onChange时向function (event, value) => void 传入选中的tab所对应的value */}
                     <Tabs value={tab} onChange={onTabChange}>
                         <Tab tabIndex={0} value='Student' label="Student" />
                         <Tab tabIndex={1} value='Instructor' label="Instructor" />
@@ -150,6 +168,8 @@ export default function PTSignUpForm(): React.ReactElement {
                         type="password"
                         autoFocus
                     />
+
+                    {/* if click on tab 'Instructor', show TextField Introduction */}
                     {tab === 'Instructor' && (<TextField
                         margin="normal"
                         fullWidth
@@ -158,6 +178,7 @@ export default function PTSignUpForm(): React.ReactElement {
                         name="Introduction"
                         onChange={onIntroChange}
                     />)}
+                    {/* If click on tab 'Student', show TextField Grade */}
                     {tab === 'Student' && (
                         <FormControl sx={styles.grade} fullWidth>
                             <InputLabel id="grade-label">Grade</InputLabel>

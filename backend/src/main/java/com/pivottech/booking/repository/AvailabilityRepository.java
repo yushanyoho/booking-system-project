@@ -13,12 +13,12 @@ import java.util.List;
 public interface AvailabilityRepository extends CrudRepository<Availability, Long> {
 
 	@Query(value = "SELECT a from Availability a " + "WHERE a.instructor = :instructor AND "
-			+ "a.utcStartTime >= :from AND a.utcEndTime < :to")
+			+ "a.utcStartTime >= :from AND a.utcEndTime <= :to")
 	List<Availability> findBetween(@Param("instructor") Instructor instructor, @Param("from") LocalDateTime from,
 			@Param("to") LocalDateTime to);
 
 	@Query(value = "SELECT a from Availability a " + "WHERE a.instructor = :instructor AND "
-			+ "a.utcStartTime >= :from AND a.utcEndTime < :to AND " + "a.reservation is NULL")
+			+ "a.utcStartTime >= :from AND a.utcEndTime <= :to AND " + "a.reservation is NULL")
 	List<Availability> findAvailableBetween(@Param("instructor") Instructor instructor,
 			@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
 

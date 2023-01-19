@@ -5,10 +5,10 @@ export type EventType = 'Reservation' | 'Availability';
 export const DATE_FORMAT = 'yyyy-MM-DD HH:mm';
 
 export interface Event {
+    title?: string,
     start: Date,
     end: Date,
     type: EventType,
-    title?: string,
     instructor?: string,
     student?: string,
     id?: number,
@@ -16,7 +16,7 @@ export interface Event {
 
 export interface Availability {
     id: number,
-    utcStartTime: string,
+    utcStartTime: string, // 2023-01-11 23:00
     utcEndTime: string,
 }
 

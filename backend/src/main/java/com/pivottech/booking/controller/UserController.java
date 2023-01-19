@@ -39,7 +39,7 @@ public class UserController {
 		if (user == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "username doesn't exist.");
 		}
-		Student updated = userService.updateStudentProfile(username, student);
+		Student updated = userService.updateUserProfile(username, student);
 		return updated;
 	}
 
@@ -59,7 +59,7 @@ public class UserController {
 		if (user == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "username doesn't exist.");
 		}
-		Instructor updated = userService.updateStudentProfile(username, instructor);
+		Instructor updated = userService.updateUserProfile(username, instructor);
 		return updated;
 	}
 

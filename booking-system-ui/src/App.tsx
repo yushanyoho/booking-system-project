@@ -16,7 +16,8 @@ export default function App(): React.ReactElement {
       <ThemeProvider theme={theme}>
         <Router>
           <Switch>
-            <Route path="/student/:username">
+            {/* 按从上到下的顺序检查path，所以 "/" 必须放在最后 */}
+            <Route path="/student/:username"> {/* :<parameter> 引用变量名，可以有多个 */}
               <StudentView />
             </Route>
             <Route path="/instructor/:username">
